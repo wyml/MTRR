@@ -1,0 +1,33 @@
+<template>
+	<view>
+		<cu-custom bgColor="bg-gradual-blue" :isBack="true">
+			<block slot="back">返回</block>
+			<block slot="content">{{title}}</block>
+		</cu-custom>
+		<view>
+			<web-view :src="link"></web-view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+
+			}
+		},
+		onLoad(option) {
+			this.link = option.link;
+			this.title = option.title;
+			console.log(this.link);
+		},
+		methods: {
+
+		}
+	}
+</script>
+
+<style>
+
+</style>

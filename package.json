@@ -1,0 +1,20 @@
+{
+  "name": "mltree",
+  "version": "1.0.0",
+  "description": "MlTreeForum小程序",
+  "main": "main.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "dayjs": "^1.8.21",
+    "got": "^10.6.0",
+    "marked": "^0.8.0",
+    "prettier": "^1.12.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

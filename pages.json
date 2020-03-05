@@ -1,0 +1,35 @@
+{
+	"pages": [{
+		"path": "pages/index/index"
+	}, {
+		"path": "pages/user/index"
+	},{
+		"path": "pages/user/login"
+	}, {
+		"path": "pages/rss/index"
+	}, {
+		"path": "pages/rss/main"
+	}, {
+		"path": "pages/rss/rsslist"
+	}    ,{
+            "path" : "pages/rss/rssinfo",
+            "style" : {}
+        }
+    ],
+	"globalStyle": {
+		"mp-alipay": {
+			/* 支付宝小程序特有相关 */
+			"transparentTitle": "always",
+			"allowsBounceVertical": "NO"
+		},
+		"navigationBarBackgroundColor": "#0081ff",
+		"navigationBarTitleText": "MlTreeRssReader",
+		"navigationStyle": "custom",
+		"navigationBarTextStyle": "white"
+	},
+	"usingComponts": true,
+	"condition": { //模式配置，仅开发期间生效
+		"current": 0 //当前激活的模式(list 的索引项)
+	}
+
+}
