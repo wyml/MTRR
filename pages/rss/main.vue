@@ -20,7 +20,6 @@
 		onLoad(option) {
 			this.link = option.link;
 			this.title = option.title;
-			console.log(this.link);
 		},
 		methods: {
 

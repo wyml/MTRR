@@ -1,8 +1,9 @@
 <script>
 	import Vue from 'vue'
+
 	export default {
 		globalData: {
-			baseUrl: 'http://127.0.0.1:8000'
+			baseUrl: 'http://rss.kingsr.cc'
 		},
 		onLaunch: function() {
 			uni.getSystemInfo({
@@ -28,7 +29,11 @@
 					Vue.prototype.CustomBar = e.statusBarHeight + e.titleBarHeight;
 					// #endif
 				}
-			})
+			});
+
+			this.$store.state.isLogin = uni.getStorageSync('isLogin') ? JSON.parse(uni.getStorageSync('isLogin')) : false;
+			this.$store.state.user = uni.getStorageSync('user') ? JSON.parse(uni.getStorageSync('user')) : {};
+			this.$store.state.rsslist = uni.getStorageSync('rsslist') ? JSON.parse(uni.getStorageSync('rsslist')) : [];
 
 			Vue.prototype.ColorList = [{
 					title: '嫣红',

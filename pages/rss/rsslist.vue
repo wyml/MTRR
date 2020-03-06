@@ -33,6 +33,10 @@
 </template>
 
 <script>
+	import {
+		mapState
+	} from 'vuex'
+
 	export default {
 		data() {
 			return {
@@ -55,7 +59,7 @@
 				let title = e.currentTarget.dataset.title;
 				let link = e.currentTarget.dataset.link;
 				uni.navigateTo({
-					url: `/pages/rss/rssinfo?title=${title}&link=${link}`
+					url: `/pages/rss/main?title=${title}&link=${link}`
 				})
 			},
 			subscribe() {

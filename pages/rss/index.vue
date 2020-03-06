@@ -10,7 +10,7 @@
 					<view class="content">
 						<view class="desc">
 							<view class="text-content">
-								<parser :html="item.description"></parser>
+								<jyf-parser :html="item.description"></jyf-parser>
 							</view>
 							<view>
 								<view class="cu-tag bg-red light sm round">{{item.form}}</view>
@@ -69,7 +69,8 @@
 					let _description = item
 						.find('description')
 						.first()
-						.text();
+						.text()
+						.replace("]]>", "");
 					let _pubDate = item
 						.find('pubDate')
 						.first()

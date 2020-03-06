@@ -3,7 +3,7 @@
 		"path": "pages/index/index"
 	}, {
 		"path": "pages/user/index"
-	},{
+	}, {
 		"path": "pages/user/login"
 	}, {
 		"path": "pages/rss/index"
@@ -11,11 +11,7 @@
 		"path": "pages/rss/main"
 	}, {
 		"path": "pages/rss/rsslist"
-	}    ,{
-            "path" : "pages/rss/rssinfo",
-            "style" : {}
-        }
-    ],
+	}],
 	"globalStyle": {
 		"mp-alipay": {
 			/* 支付宝小程序特有相关 */

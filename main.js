@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App'
+import store from 'store'
 
 import hot from './pages/rss/index.vue'
 import user from './pages/user/index.vue'
@@ -13,6 +14,7 @@ Vue.config.productionTip = false
 App.mpType = 'app'
 
 const app = new Vue({
+	store,
 	...App
 })
 app.$mount()
