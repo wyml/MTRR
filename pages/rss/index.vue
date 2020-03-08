@@ -1,6 +1,13 @@
 <template>
 	<view>
-		<scroll-view scroll-y>
+		<view v-if="$store.state.rsslist.length==0">
+			<view class="text-center margin-top">
+				<view class="text-gray">你尚未订阅任何一个内容呢。快去订阅一个吧~</view>
+				<navigator url="/pages/rss/rsslist" class="cu-btn bg-red margin-top round"><text class="cuIcon-notice"></text>
+					去订阅</navigator>
+			</view>
+		</view>
+		<scroll-view scroll-y v-else class="bt-bar-m">
 			<view @tap="goToMain" class="cu-card article" v-for="(item,index) of items" :key="index" :data-link="item.link"
 			 :data-title="item.title">
 				<view class="cu-item shadow">
@@ -12,12 +19,13 @@
 							<view class="text-content">
 								<jyf-parser :html="item.description"></jyf-parser>
 							</view>
-							<view>
-								<view class="cu-tag bg-red light sm round">{{item.form}}</view>
-								<view class="cu-tag bg-green light sm round">{{item.pubdate}}</view>
+							<view class="action">
+								<view class="cu-tag bg-red light sm round">{{item.from}}</view>
+								<view class="cu-tag bg-blue light sm round">{{item.pubDate}}</view>
 							</view>
 						</view>
 					</view>
+
 				</view>
 			</view>
 		</scroll-view>
@@ -27,7 +35,6 @@
 <script>
 	import cheerio from 'cheerio';
 	import dayjs from 'dayjs';
-
 	const CDATAEXP = /\<\!\[CDATA\[([\s\S]*?)\]\]\>/;
 	export default {
 		data() {
@@ -39,51 +46,59 @@
 			uni.showLoading({
 				title: '加载中...'
 			});
-			uni.request({
-				method: 'POST',
-				url: getApp().globalData.baseUrl + '/rssrequire',
-				data: {
-					path: 'https://rsshub.wgjstc.com/weibo/user/2621448527',
-					rsshub: false
-				},
-				success: (e) => {
-					let data = e.data;
-					this.handleData(data);
-				}
-			})
+			this.getRssList();
+			uni.$on('refreshRss', () => {
+				this.getRssList();
+			});
 		},
 		methods: {
-			handleData(data) {
-				let $ = cheerio.load(data);
-				let title = CDATAEXP.exec($('channel>title').text())[1];
-				let items = $('item');
-				let _this = this;
-				items.map((index, item) => {
-					item = $(item);
-					let _title = CDATAEXP.exec(
-						item
-						.find('title')
-						.first()
-						.text()
-					)[1];
-					let _description = item
-						.find('description')
-						.first()
-						.text()
-						.replace("]]>", "");
-					let _pubDate = item
-						.find('pubDate')
-						.first()
-						.text();
-					_pubDate = dayjs(_pubDate).format('YYYY-MM-DD HH:mm:ss');
-					_this.items.push({
-						title: _title,
-						link: item.find('link').first()[0].next.data.replace(/[\r\n]/g, ''),
-						description: _description,
-						form: title,
-						pubdate: _pubDate
-					})
+			getRssList() {
+				var rsslist = this.$store.state.rsslist;
+				console.log(rsslist[0]);
+				if (rsslist.length == 0) {
+					uni.hideLoading();
+					return;
+				}
+				var param = [];
+				rsslist.forEach((val, index) => {
+					param.push(val.rss_url);
 				});
+				uni.request({
+					method: 'POST',
+					url: getApp().globalData.baseUrl + '/rssrequire',
+					data: {
+						path: param,
+						rsshub: false
+					},
+					success: (e) => {
+						let data = e.data;
+						this.handleData(data);
+					}
+				});
+			},
+			handleData(data) {
+				if (!Array.isArray(data)) {
+					uni.hideLoading();
+					uni.showToast({
+						icon: 'none',
+						title: data
+					})
+					return;
+				}
+				let orderList = data;
+				// 排序，使得时间较早的RSS在前面
+				orderList.sort(function(a, b) {
+					var datea = dayjs(a.pubDate).unix();
+					var dateb = dayjs(b.pubDate).unix()
+					if (datea > dateb) {
+						return -1;
+					} else if (datea < dateb) {
+						return 1;
+					} else {
+						return 0;
+					}
+				});
+				this.items = orderList;
 				uni.hideLoading();
 			},
 			goToMain(e) {

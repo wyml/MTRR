@@ -5,7 +5,7 @@
 			<block slot="content">{{title}}</block>
 		</cu-custom>
 		<view>
-			<web-view :src="link"></web-view>
+			<web-view progress="true" :src="link"></web-view>
 		</view>
 	</view>
 </template>

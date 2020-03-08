@@ -1,10 +1,27 @@
 <template>
 	<view>
-		<image src="../../static/bg.png" mode="aspectFit" style="width: 100%;"></image>
-
-		<view class="flex flex-direction padding">
-			<view class="text-bold text-center text-lg margin-tb">登录以获得完整的使用权限</view>
-			<button class="cu-btn bg-green margin-tb-sm lg" open-type="getUserInfo" @tap="login">登录</button>
+		<image src="../../static/bg.png" mode="scaleToFill" class="bg-img flex align-center justify-center" style="width: 100%;"></image>
+		<view class="cu-bar bg-white margin-bottom-sm">
+			<view class="action border-title">
+				<text class="text-xl text-bold">登录</text>
+				<text class="bg-blue" style="width:2rem"></text>
+			</view>
+		</view>
+		<form>
+			<view class="cu-form-group">
+				<view class="title">邮箱</view>
+				<input v-model="form.email" name="email" type="email"></input>
+			</view>
+			<view class="cu-form-group">
+				<view class="title">密码</view>
+				<input v-model="form.pwd" name="password" type="password"></input>
+			</view>
+		</form>
+		<view class="action margin-top padding-lr-sm">
+			<button class="cu-btn bg-green block" @tap="login">登录</button>
+		</view>
+		<view class="action margin-top-sm padding-lr-sm">
+			<button class="cu-btn bg-blue block" @tap="goToReg">注册</button>
 		</view>
 	</view>
 </template>
@@ -14,49 +31,46 @@
 		data() {
 			return {
 				provider: null,
+				form: {
+					email: '',
+					pwd: '',
+				}
 			}
 		},
 		created() {
 			let _this = this;
-			if (this.$store.isLogin) {
+			if (this.$store.state.isLogin) {
 				uni.redirectTo({
 					url: '/pages/index/index'
 				});
 			}
-			uni.getProvider({
-				service: 'oauth',
-				success(res) {
-					_this.provider = res.provider;
-				}
-			});
 		},
 		methods: {
 			login() {
-				let _this = this;
-				uni.login({
-					provider: 'weixin',
+				let data = this.form;
+				uni.request({
+					method: 'POST',
+					url: getApp().globalData.baseUrl + "/login",
+					data: data,
 					success: (res) => {
-						uni.request({
-							url: getApp().globalData.baseUrl + 'user/wechatLogin',
-							data: {
-								code: res.code
-							},
-							dataType: 'json',
-							success: (resp) => {
-								uni.getUserInfo({
-									provider: 'weixin',
-									success: (userinfo) => {
-										_this.$store.commit('login', {
-											provider: 'weixin',
-											user: userinfo.userInfo
-										});
-										uni.navigateBack();
-									}
-								});
-							}
-						})
+						console.log(res);
+						if (res.data.code == 1) {
+							this.$store.commit('login', res.data.data);
+							uni.navigateBack({
 
+							})
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							});
+						}
 					}
+				})
+			},
+			goToReg() {
+				uni.navigateTo({
+					url: '/pages/user/register'
 				})
 			}
 		}

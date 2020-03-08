@@ -3,9 +3,11 @@ import App from './App'
 import store from 'store'
 
 import hot from './pages/rss/index.vue'
+import dynamic from './pages/dynamic/dynamic.vue'
 import user from './pages/user/index.vue'
 import cuCustom from './colorui/components/cu-custom.vue'
 Vue.component('hot', hot)
+Vue.component('dynamic', dynamic)
 Vue.component('user', user)
 Vue.component('cu-custom', cuCustom)
 

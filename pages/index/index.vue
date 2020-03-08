@@ -4,6 +4,7 @@
 			<block slot="content">{{PageTitle}}</block>
 		</cu-custom>
 		<hot v-if="PageTitle==='动态'"></hot>
+		<dynamic v-if="PageTitle==='发现'"></dynamic>
 		<user v-if="PageTitle==='我的'"></user>
 		<view class="cu-bar tabbar bg-white foot">
 			<view @tap="NavChange" class="action" :class="PageTitle==='动态'?'text-blue':'text-gray'" data-cur="动态">

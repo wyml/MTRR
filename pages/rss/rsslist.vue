@@ -7,24 +7,25 @@
 		<view class="cu-bar search bg-white fixed" :style="[{top:CustomBar + 'px'}]">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
-				<input v-model="search" type="text" placeholder="搜索源关键字" confirm-type="search"></input>
+				<input v-model="search" @input="overSearch" type="text" placeholder="搜索源关键字" confirm-type="search"></input>
 			</view>
 			<view class="action">
 				<button class="cu-btn bg-green shadow-blur round" @tap="searchRss">搜索</button>
 			</view>
 		</view>
-		<scroll-view scroll-y="true" :style="{marginTop:CustomBar+10+'px'}">
+		<scroll-view scroll-y="true" :style="{marginTop:(CustomBar-20)+'px'}">
 			<view class="cu-list menu">
-				<view class="cu-item" v-for="(item,index) of rsslist" :key="index" @tap="goToRssInfo" :data-title="item.title"
-				 :data-link="item.link" :data-rule="item.rule">
-					<view class="content padding-tb-sm">
+				<view class="cu-item" v-for="(item,index) of rsslist" :key="index" :data-rule="item.rule">
+					<view class="content padding-tb-sm" :data-title="item.title" :data-link="item.link" @tap="goToRssInfo">
 						<view class="text-bold text-xl">
 							<view class='cu-tag radius bg-orange margin-right-xs'>{{item.form}}</view> {{item.title}}
 						</view>
 						<view class="text-gray text-sm">
 							<view>{{item.description.replace(/<[^>]*>|<\/[^>]*>/gm,"")}}</view>
-							<view class='cu-tag radius bg-blue fr' @tap="subscribe"><text class="cuIcon-notice margin-right-xs"></text> 订阅</view>
 						</view>
+					</view>
+					<view class="action">
+						<button class="cu-btn round sm bg-blue margin-left-sm" @tap="subscribe(index)"><text class="cuIcon-notice margin-right-xs"></text>订阅</button>
 					</view>
 				</view>
 			</view>
@@ -33,9 +34,7 @@
 </template>
 
 <script>
-	import {
-		mapState
-	} from 'vuex'
+	import dayjs from 'dayjs'
 
 	export default {
 		data() {
@@ -46,13 +45,34 @@
 			}
 		},
 		created() {
-			uni.request({
-				url: getApp().globalData.baseUrl + "/rsslist",
-				success: (e) => {
-					let data = e.data.data;
-					this.rsslist = data;
-				}
-			})
+			uni.showLoading({
+				title: '加载中...'
+			});
+			let sysrsslist = uni.getStorageSync('system_rss_list');
+			let system_rss_list_cache_time = uni.getStorageSync('system_rss_list_cache_time');
+
+			if (!sysrsslist || system_rss_list_cache_time < dayjs().unix()) {
+				uni.request({
+					url: getApp().globalData.baseUrl + "/rsslist",
+					success: (e) => {
+						let data = e.data.data;
+						this.rsslist = data;
+						uni.setStorage({
+							key: 'system_rss_list',
+							data: JSON.stringify(data)
+						});
+						uni.setStorage({
+							key: 'system_rss_list_cache_time',
+							data: dayjs().add(1, 'day').unix()
+						});
+						uni.hideLoading();
+					}
+				})
+			} else {
+				this.rsslist = JSON.parse(sysrsslist);
+				uni.hideLoading();
+			}
+
 		},
 		methods: {
 			goToRssInfo(e) {
@@ -62,11 +82,17 @@
 					url: `/pages/rss/main?title=${title}&link=${link}`
 				})
 			},
-			subscribe() {
-
+			subscribe(index) {
+				let item = this.rsslist[index];
+				uni.navigateTo({
+					url: '/pages/rss/subscribe?item=' + encodeURIComponent(JSON.stringify(item))
+				});
 			},
 			searchRss() {
 				let key = this.search.toLowerCase();
+				uni.showLoading({
+					title:'搜索中'
+				});
 				uni.request({
 					method: 'POST',
 					url: getApp().globalData.baseUrl + '/search',
@@ -76,8 +102,14 @@
 					dataType: 'json',
 					success: (res) => {
 						this.rsslist = res.data;
+						uni.hideLoading();
 					}
 				});
+			},
+			overSearch() {
+				if (this.search == '') {
+					this.rsslist = JSON.parse(uni.getStorageSync('system_rss_list'));
+				}
 			}
 		}
 	}

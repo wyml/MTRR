@@ -23,7 +23,8 @@
 <script>
 	// #ifndef H5
 	import trees from "./libs/trees";
-	const cache = getApp().parserCache = {};
+	const app = getApp({allowDefault: true});
+	const cache = app.parserCache = {};
 	const CssHandler = require("./libs/CssHandler.js");
 	var document; // document 补丁包 https://jin-yufeng.github.io/Parser/#/instructions?id=document
 	// #ifdef MP-WEIXIN || MP-TOUTIAO

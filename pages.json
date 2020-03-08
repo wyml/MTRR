@@ -6,11 +6,37 @@
 	}, {
 		"path": "pages/user/login"
 	}, {
+		"path": "pages/user/register"
+	}, {
 		"path": "pages/rss/index"
 	}, {
 		"path": "pages/rss/main"
 	}, {
 		"path": "pages/rss/rsslist"
+	}, {
+		"path": "pages/rss/subscribe",
+		"style": {}
+	}, {
+		"path": "pages/dynamic/dynamic",
+		"style": {}
+	}, {
+		"path": "pages/rss/edit",
+		"style": {}
+	}, {
+		"path": "pages/user/setting",
+		"style": {}
+	}, {
+		"path": "pages/index/about",
+		"style": {}
+	}, {
+		"path": "pages/user/update",
+		"style": {}
+	}, {
+		"path": "pages/user/updatePwd",
+		"style": {}
+	}, {
+		"path": "pages/idnex/feedback",
+		"style": {}
 	}],
 	"globalStyle": {
 		"mp-alipay": {
