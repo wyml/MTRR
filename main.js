@@ -2,6 +2,12 @@ import Vue from 'vue'
 import App from './App'
 import store from 'store'
 
+// 加入HTTP
+import {
+	http
+} from './utils/api'
+Vue.prototype.$http = http;
+
 import hot from './pages/rss/index.vue'
 import dynamic from './pages/dynamic/dynamic.vue'
 import user from './pages/user/index.vue'

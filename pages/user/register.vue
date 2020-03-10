@@ -31,7 +31,6 @@
 </template>
 
 <script>
-	const url = getApp().globalData.baseUrl + "/register";
 	export default {
 		data() {
 			return {
@@ -62,13 +61,8 @@
 				}
 				let data = this.form;
 				this.dis = true;
-				console.log(url);
-				uni.request({
-					method: 'POST',
-					url: url,
-					data: data,
-					success: (res) => {
-						console.log(res.data);
+				this.$http.post("/register", data)
+					.then(res => {
 						if (res.data.code == 1) {
 							uni.showModal({
 								title: '注册成功',
@@ -87,11 +81,10 @@
 							});
 							this.dis = false;
 						}
-					},
-					fail: (res) => {
+					})
+					.catch(res => {
 						console.log(res);
-					}
-				});
+					});
 			},
 			goTologin() {
 				uni.navigateBack();

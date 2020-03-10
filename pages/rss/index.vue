@@ -53,41 +53,44 @@
 		},
 		methods: {
 			getRssList() {
+				var cache = uni.getStorageSync('cache_rss');
+				if (cache && uni.getStorageSync('cache_rss_time') > dayjs().unix()) {
+					this.items = JSON.parse(cache);
+					return;
+				}
 				var rsslist = this.$store.state.rsslist;
-				console.log(rsslist[0]);
 				if (rsslist.length == 0) {
 					uni.hideLoading();
 					return;
 				}
 				var param = [];
 				rsslist.forEach((val, index) => {
+					console.log(val);
 					param.push(val.rss_url);
 				});
-				uni.request({
-					method: 'POST',
-					url: getApp().globalData.baseUrl + '/rssrequire',
-					data: {
-						path: param,
-						rsshub: false
-					},
-					success: (e) => {
-						let data = e.data;
-						this.handleData(data);
+				this.$http.post("/rssrequire", {
+					path: param,
+					rsshub: false
+				}).then(res => {
+					if (!Array.isArray(res.data)) {
+						uni.hideLoading();
+						uni.showToast({
+							icon: 'none',
+							title: res.data
+						})
+						return;
 					}
+					this.items = res.data;
+				}).catch(res => {
+					console.log(res);
+					uni.hideLoading();
+				}).fail(res => {
+					console.log(res);
 				});
 			},
-			handleData(data) {
-				if (!Array.isArray(data)) {
-					uni.hideLoading();
-					uni.showToast({
-						icon: 'none',
-						title: data
-					})
-					return;
-				}
-				let orderList = data;
+			handleData() {
 				// 排序，使得时间较早的RSS在前面
-				orderList.sort(function(a, b) {
+				this.items.sort(function(a, b) {
 					var datea = dayjs(a.pubDate).unix();
 					var dateb = dayjs(b.pubDate).unix()
 					if (datea > dateb) {
@@ -98,7 +101,14 @@
 						return 0;
 					}
 				});
-				this.items = orderList;
+				uni.setStorage({
+					key: 'cache_rss',
+					data: JSON.stringify(this.items)
+				});
+				uni.setStorage({
+					key: 'cache_rss_time',
+					data: dayjs().add(10, 'minut').unix()
+				})
 				uni.hideLoading();
 			},
 			goToMain(e) {

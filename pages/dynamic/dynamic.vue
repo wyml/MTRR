@@ -1,6 +1,6 @@
 <template>
-	<view>
-		<scroll-view scroll-y="true" class="margin-top-sm bt-bar-m">
+	<view class="bt-bar-m">
+		<scroll-view scroll-y="true" class="margin-top-sm">
 			<view class="cu-list menu">
 				<view class="cu-item" v-for="(item,index) of items" :key="index" :data-rule="item.rule">
 					<view class="content padding-tb-sm" :data-title="item.title" :data-link="item.link" @tap="goToRssInfo">
@@ -17,6 +17,10 @@
 				</view>
 			</view>
 		</scroll-view>
+		<view class="margin-top action padding-lr-sm">
+			<navigator class="cu-btn radius bg-blue block" url="../rss/rsslist" open-type="navigate"><text class="cuIcon-noticefill"></text>
+				RSS列表</navigator>
+		</view>
 	</view>
 </template>
 
@@ -35,18 +39,14 @@
 		},
 		methods: {
 			getList() {
-				console.log(getApp().globalData.baseUrl+"/index/dynamic");
-				uni.request({
-					url: getApp().globalData.baseUrl + "/index/dynamic",
-					success: (res) => {
+				this.$http.get("/index/dynamic")
+					.then(res => {
 						this.items = res.data;
 						uni.hideLoading();
-					},
-					fail: (res) => {
+					}).catch(res => {
 						console.log(res);
 						uni.hideLoading();
-					}
-				})
+					});
 			},
 			goToRssInfo(e) {
 				let title = e.currentTarget.dataset.title;
@@ -55,6 +55,12 @@
 					url: `/pages/rss/main?title=${title}&link=${link}`
 				})
 			},
+			subscribe(index) {
+				let item = this.items[index];
+				uni.navigateTo({
+					url: '/pages/rss/subscribe?item=' + encodeURIComponent(JSON.stringify(item))
+				});
+			}
 		}
 	}
 </script>

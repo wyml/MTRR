@@ -28,12 +28,8 @@
 				let data = {
 					username: this.username
 				};
-
-				uni.request({
-					method: 'POST',
-					url: getApp().globalData.baseUrl + "/member/update",
-					data: data,
-					success: (res) => {
+				this.$http.post("/member/update", data)
+					.then(res => {
 						if (res.data.code == 1) {
 							this.$store.state.user.username = this.username;
 							uni.navigateBack();
@@ -43,8 +39,7 @@
 								title: res.data.msg
 							})
 						}
-					}
-				})
+					});
 			}
 		}
 	}

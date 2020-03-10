@@ -48,25 +48,24 @@
 		methods: {
 			login() {
 				let data = this.form;
-				uni.request({
-					method: 'POST',
-					url: getApp().globalData.baseUrl + "/login",
-					data: data,
-					success: (res) => {
-						console.log(res);
-						if (res.data.code == 1) {
-							this.$store.commit('login', res.data.data);
-							uni.navigateBack({
-
-							})
-						} else {
-							uni.showToast({
-								icon: 'none',
-								title: res.data.msg
-							});
-						}
+				this.$http.post("/login",data)
+				.then(res=>{
+					if (res.data.code == 1) {
+						var user = res.data.data.user,
+						token = res.data.data.token;
+						this.$store.commit('login', user);
+						uni.setStorage({
+							key:'token',
+							data:token
+						});
+						uni.navigateBack();
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.data.msg
+						});
 					}
-				})
+				});
 			},
 			goToReg() {
 				uni.navigateTo({

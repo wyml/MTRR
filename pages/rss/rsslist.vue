@@ -48,14 +48,14 @@
 			uni.showLoading({
 				title: '加载中...'
 			});
-			let sysrsslist = uni.getStorageSync('system_rss_list');
-			let system_rss_list_cache_time = uni.getStorageSync('system_rss_list_cache_time');
+			var sysrsslist = uni.getStorageSync('system_rss_list');
+			console.log('OK');
+			var system_rss_list_cache_time = uni.getStorageSync('system_rss_list_cache_time');
 
-			if (!sysrsslist || system_rss_list_cache_time < dayjs().unix()) {
-				uni.request({
-					url: getApp().globalData.baseUrl + "/rsslist",
-					success: (e) => {
-						let data = e.data.data;
+			if (!sysrsslist || (system_rss_list_cache_time < dayjs().unix())) {
+				this.$http.get("/rsslist")
+					.then(res => {
+						let data = res.data.data;
 						this.rsslist = data;
 						uni.setStorage({
 							key: 'system_rss_list',
@@ -66,13 +66,12 @@
 							data: dayjs().add(1, 'day').unix()
 						});
 						uni.hideLoading();
-					}
-				})
+					});
 			} else {
 				this.rsslist = JSON.parse(sysrsslist);
 				uni.hideLoading();
 			}
-
+			console.log(system_rss_list_cache_time);
 		},
 		methods: {
 			goToRssInfo(e) {
@@ -91,20 +90,19 @@
 			searchRss() {
 				let key = this.search.toLowerCase();
 				uni.showLoading({
-					title:'搜索中'
+					title: '搜索中'
 				});
-				uni.request({
-					method: 'POST',
-					url: getApp().globalData.baseUrl + '/search',
-					data: {
-						key: key,
-					},
-					dataType: 'json',
-					success: (res) => {
+				this.$http.post('/search', {
+						key: key
+					})
+					.then(res => {
 						this.rsslist = res.data;
 						uni.hideLoading();
-					}
-				});
+					})
+					.catch(res => {
+						console.log(res);
+						uni.hideLoading();
+					});
 			},
 			overSearch() {
 				if (this.search == '') {

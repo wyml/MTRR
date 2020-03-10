@@ -1,9 +1,9 @@
 <template>
 	<view class="bt-bar-m">
-		<view class="bg-img flex align-center justify-center" style="background-image: url('http://q5dda2fej.bkt.clouddn.com/user.jpeg-webp');height: 420upx;">
+		<view class="bg-img flex align-center justify-center" style="background-image: url('http://ec-cdn.kingsr.cc/user.jpeg-webp');height: 420upx;">
 			<view class="padding-xl text-white" @tap="goToLogin">
 				<view class="padding-xs text-center">
-					<view class="cu-avatar round xl bg-white" style="background-image: url('http://q5dda2fej.bkt.clouddn.com/72x72.png-webp');"></view>
+					<view class="cu-avatar round xl bg-white" style="background-image: url('http://ec-cdn.kingsr.cc/72x72.png-webp');"></view>
 				</view>
 				<view class="padding-xs text-lg text-center text-black text-bold">
 					{{isLogin?user.username:'点击头像登录'}}

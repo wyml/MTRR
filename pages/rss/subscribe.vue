@@ -142,52 +142,46 @@
 						this.modal.show = false
 					}
 				};
-				uni.request({
-					method: 'POST',
-					url: getApp().globalData.baseUrl + '/rssrequire',
-					data: {
-						path: rss.link,
-						rsshub: false
-					},
-					success: (res) => {
-						if (res.data == 'error') {
-							this.modal = {
-								title: '源规则错误',
-								content: '请检查RSS规则是否有误？',
-								show: true,
-								closeFunc: () => {
-									this.modal.show = false;
-								}
-							};
-							return;
-						}
-
-						this.$store.commit('pushRssList', {
-							'rss_title': rss.title,
-							'rss_url': rss.link,
-							'rss_rule': rss.rule,
-							'rss_refresh': rss.refresh
+				this.$http.post("/rssrequire", {
+					path: rss.link,
+					rsshub: false
+				}).then(res => {
+					if (res.data == 'error') {
+						this.modal = {
+							title: '源规则错误',
+							content: '请检查RSS规则是否有误？',
+							show: true,
+							closeFunc: () => {
+								this.modal.show = false;
+							}
+						};
+						return;
+					}
+					this.$store.commit('pushRssList', {
+						'rss_title': rss.title,
+						'rss_url': rss.link,
+						'rss_rule': rss.rule,
+						'rss_refresh': rss.refresh
+					});
+					this.modal.show = false;
+					if (this.$store.state.isLogin) {
+						uni.showToast({
+							title: '添加成功并已同步到云端',
+							icon: 'success',
+							success() {
+								uni.navigateBack()
+							}
 						});
-						this.modal.show = false;
-						if (this.$store.state.isLogin) {
-							uni.showToast({
-								title: '添加成功并已同步到云端',
-								icon: 'success',
-								success() {
-									uni.navigateBack()
-								}
-							});
-						} else {
-							this.modal = {
-								title: '订阅成功',
-								content: '订阅成功，您尚未登录。订阅信息仅保留在本地清除数据后失效！推荐登录享受云端同步！',
-								show: true,
-								closeFunc: () => {
-									uni.$emit('refreshRss');
-									uni.navigateBack({});
-								}
-							};
-						}
+					} else {
+						this.modal = {
+							title: '订阅成功',
+							content: '订阅成功，您尚未登录。订阅信息仅保留在本地清除数据后失效！推荐登录享受云端同步！',
+							show: true,
+							closeFunc: () => {
+								uni.$emit('refreshRss');
+								uni.navigateBack({});
+							}
+						};
 					}
 				});
 			},

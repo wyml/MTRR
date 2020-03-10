@@ -35,10 +35,10 @@
 		},
 		methods: {
 			update() {
-				if(this.pwd !== this.confirm){
+				if (this.pwd !== this.confirm) {
 					uni.showToast({
-						icon:'none',
-						title:'两次密码不一致！'
+						icon: 'none',
+						title: '两次密码不一致！'
 					});
 					return;
 				}
@@ -47,11 +47,8 @@
 					pwd: this.pwd,
 					confirm: this.confirm
 				}
-				uni.request({
-					method: 'POST',
-					url: getApp().globalData.baseUrl + "/member/changePwd",
-					data: data,
-					success: (res) => {
+				this.$http.post("/member/changePwd", data)
+					.then(res => {
 						if (res.data.cdoe == 1) {
 							uni.showModal({
 								showCancel: false,
@@ -67,8 +64,7 @@
 								}
 							})
 						}
-					}
-				})
+					});
 			}
 		}
 	}

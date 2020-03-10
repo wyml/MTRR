@@ -3,7 +3,6 @@
 
 	export default {
 		globalData: {
-			baseUrl: 'https://rss.kingsr.cc',
 			version: '1.0.0'
 		},
 		onLaunch: function() {
@@ -38,6 +37,21 @@
 
 		},
 		onShow: function() {
+			let token = uni.getStorageSync('token');
+			if (token != '') {
+				this.$http.post("/checkToken", {
+						token: token
+					})
+					.then(res => {
+						if (!res.data[0]) {
+							this.$store.commit('logout');
+							uni.showToast({
+								icon: 'none',
+								title: 'Token已过期，请注意重新登录'
+							});
+						}
+					});
+			}
 			console.log('App Show')
 		},
 		onHide: function() {
@@ -50,7 +64,8 @@
 <style>
 	@import "colorui/main.css";
 	@import "colorui/icon.css";
-	.bt-bar-m{
+
+	.bt-bar-m {
 		margin-bottom: 130upx;
 	}
 </style>
