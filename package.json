@@ -6,7 +6,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "dayjs": "^1.8.21",
-    "got": "^10.6.0",
+    "got": "^11.8.5",
     "marked": "^0.8.0",
     "prettier": "^1.12.1"
   },
